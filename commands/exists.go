@@ -3,7 +3,7 @@ package commands
 import (
 	"lmdb-cli/core"
 
-	"github.com/bmatsuo/lmdb-go/lmdb"
+	"github.com/PowerDNS/lmdb-go/lmdb"
 )
 
 type Exists struct {

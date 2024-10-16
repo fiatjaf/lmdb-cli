@@ -8,7 +8,7 @@ import (
 	"path"
 	"strconv"
 
-	"github.com/bmatsuo/lmdb-go/lmdb"
+	"github.com/PowerDNS/lmdb-go/lmdb"
 )
 
 var NoPromptErr = errors.New("no prompt has been configured")

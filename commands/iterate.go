@@ -2,14 +2,12 @@ package commands
 
 import (
 	"bytes"
-
 	"lmdb-cli/core"
 
-	"github.com/bmatsuo/lmdb-go/lmdb"
+	"github.com/PowerDNS/lmdb-go/lmdb"
 )
 
-type Iterate struct {
-}
+type Iterate struct{}
 
 func (cmd Iterate) Execute(context *core.Context, input []byte) (err error) {
 	return cmd.execute(context, false)
