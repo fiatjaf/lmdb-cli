@@ -135,6 +135,7 @@ func (c *Context) PrepareCursor(prefix []byte, includeValues bool) error {
 	if err != nil {
 		return err
 	}
+	txn.RawRead = true
 	cursor, err := txn.OpenCursor(c.DBI)
 	if err != nil {
 		txn.Abort()
