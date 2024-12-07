@@ -23,10 +23,10 @@ func (cmd Iterate) execute(context *core.Context, first bool) (err error) {
 		var key, value []byte
 		if first && cursor.Prefix != nil {
 			key, value, err = cursor.Get(cursor.Prefix, nil, lmdb.SetRange)
-			first = false
 		} else {
 			key, value, err = cursor.Get(nil, nil, lmdb.Next)
 		}
+		first = false
 
 		if lmdb.IsNotFound(err) || (cursor.Prefix != nil && !bytes.HasPrefix(key, cursor.Prefix)) {
 			context.CloseCursor()
