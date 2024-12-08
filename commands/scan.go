@@ -3,6 +3,7 @@ package commands
 import "lmdb-cli/core"
 
 type Scan struct {
+	PageSize int
 }
 
 func (cmd Scan) Execute(context *core.Context, input []byte) (err error) {
@@ -19,5 +20,5 @@ func (cmd Scan) Execute(context *core.Context, input []byte) (err error) {
 	if err := context.PrepareCursor(prefix, true); err != nil {
 		return err
 	}
-	return Iterate{}.execute(context, true)
+	return Iterate{cmd.PageSize}.execute(context, true)
 }

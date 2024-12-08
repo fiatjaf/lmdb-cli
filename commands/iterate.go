@@ -7,7 +7,9 @@ import (
 	"github.com/PowerDNS/lmdb-go/lmdb"
 )
 
-type Iterate struct{}
+type Iterate struct {
+	PageSize int
+}
 
 func (cmd Iterate) Execute(context *core.Context, input []byte) (err error) {
 	return cmd.execute(context, false)
@@ -18,7 +20,7 @@ func (cmd Iterate) execute(context *core.Context, first bool) (err error) {
 	if cursor == nil {
 		return nil
 	}
-	for i := 0; i < 10; i++ {
+	for i := 0; i < cmd.PageSize; i++ {
 		var err error
 		var key, value []byte
 		if first && cursor.Prefix != nil {

@@ -4,26 +4,26 @@ package main
 import (
 	"bytes"
 	"flag"
+	"lmdb-cli/commands"
+	"lmdb-cli/core"
 	"log"
 	"os"
 	"path"
 	"strings"
 
 	"github.com/peterh/liner"
-
-	"lmdb-cli/commands"
-	"lmdb-cli/core"
 )
 
 var (
-	pathFlag    = flag.String("db", "", "Relative path to lmdb file")
-	nameFlag    = flag.String("name", "", "database name to open")
-	sizeFlag    = flag.Int("size", 32*1024*1024, "size in bytes to allocate for new database")
-	growthFlag  = flag.Float64("growth", 1, "factor to grow/shrink an existing database")
-	roFlag      = flag.Bool("ro", false, "open the database in read-only mode")
-	dir         = flag.Bool("dir", true, "path given is the directory (when false, uses MDB_NOSUBDIR)")
-	dbsFlag     = flag.Int("dbs", 0, "number of additional databases to allow")
-	commandFlag = flag.String("c", "", "command to run")
+	pathFlag     = flag.String("db", "", "Relative path to lmdb file")
+	nameFlag     = flag.String("name", "", "database name to open")
+	sizeFlag     = flag.Int("size", 32*1024*1024, "size in bytes to allocate for new database")
+	growthFlag   = flag.Float64("growth", 1, "factor to grow/shrink an existing database")
+	pageSizeFlag = flag.Int("pagesize", 20, "size of page when iterating")
+	roFlag       = flag.Bool("ro", false, "open the database in read-only mode")
+	dir          = flag.Bool("dir", true, "path given is the directory (when false, uses MDB_NOSUBDIR)")
+	dbsFlag      = flag.Int("dbs", 0, "number of additional databases to allow")
+	commandFlag  = flag.String("c", "", "command to run")
 
 	cmds = make(map[string]Command)
 
@@ -34,25 +34,23 @@ type Command interface {
 	Execute(context *core.Context, arguments []byte) error
 }
 
-func init() {
+func main() {
+	flag.Parse()
+
 	cmds["del"] = commands.Del{}
 	cmds["exists"] = commands.Exists{}
 	cmds["get"] = commands.Get{}
 	cmds["info"] = commands.Stats{}
-	cmds["it"] = commands.Iterate{}
+	cmds["it"] = commands.Iterate{PageSize: *pageSizeFlag}
 	cmds["put"] = commands.Put{}
-	cmds["scan"] = commands.Scan{}
+	cmds["scan"] = commands.Scan{PageSize: *pageSizeFlag}
 	cmds["set"] = commands.Put{}
 	cmds["stat"] = commands.Stats{}
 	cmds["stats"] = commands.Stats{}
 	cmds["use"] = commands.Use{}
-	cmds["keys"] = commands.Keys{}
+	cmds["keys"] = commands.Keys{PageSize: *pageSizeFlag}
 	cmds["help"] = commands.Help{}
 	cmds["ascii"] = commands.Ascii{}
-}
-
-func main() {
-	flag.Parse()
 
 	if len(*pathFlag) == 0 && len(flag.Args()) == 1 {
 		pathFlag = &flag.Args()[0]
